@@ -166,7 +166,7 @@
                 </li>
 
                 <li>
-                    <button type="button" id="agendarBtn" onclick="agendarLavagem()" disabled>Agendar lavagem</button>
+                    <button type="button" id="agendarBtn" onclick="enviarFormulario()" disabled>Agendar lavagem</button>
                 </li>
             
             </ul>
@@ -213,6 +213,9 @@
     </style>
 
     <script>
+        // Inicializando o EmailJS com seu userID
+        emailjs.init("OwY2ejow991Tf-EE5");  // Substitua pelo seu USER ID do EmailJS
+
         // Função para validar o formulário e habilitar o botão de envio
         function validarFormulario() {
             var formasLavagem = document.getElementById("formas-lavagem");
@@ -231,14 +234,47 @@
             document.getElementById("agendarBtn").disabled = !isValid;
         }
 
-        // Função para agendar a lavagem
-        function agendarLavagem() {
-            console.log("Lavagem agendada com sucesso!");
-            // Redireciona para a próxima página
-            window.location.href = 'Terçeira.html'; // Corrigido o erro de digitação para 'terceira.html'
+        // Função para enviar o formulário via EmailJS
+        function enviarFormulario() {
+            var formasLavagem = document.getElementById("formas-lavagem").value;
+            var adicionaisLavagem = document.getElementById("adicionais-lavagem").value;
+            var formasPagamento = document.getElementById("formas-pagamento").value;
+            var email = document.getElementById("email").value;
+            var telefone = document.getElementById("telefone").value;
+            var cidade = document.getElementById("cidade").value;
+            var avenida = document.getElementById("avenida").value;
+            var condominio = document.getElementById("condominio").value;
+            var casa = document.getElementById("casa").value;
+            var rua = document.getElementById("rua").value;
+
+            // Crie um objeto com os dados do formulário
+            var templateParams = {
+                formasLavagem: formasLavagem,
+                adicionaisLavagem: adicionaisLavagem,
+                formasPagamento: formasPagamento,
+                email: email,
+                telefone: telefone,
+                cidade: cidade,
+                avenida: avenida,
+                condominio: condominio,
+                casa: casa,
+                rua: rua
+            };
+
+            // Enviar os dados usando o EmailJS
+            emailjs.send('service_m0u8meb', 'template_8hswb3s', templateParams)
+                .then(function(response) {
+                    alert("Sua lavagem foi agendada com sucesso!");
+                    console.log('SUCCESS', response);
+                    // Redireciona para a próxima página após o envio bem-sucedido
+                    window.location.href = "Terçeira.html";  // Substitua pela URL da próxima página
+                }, function(error) {
+                    console.log('FAILED', error);
+                    alert("Houve um erro ao agendar a lavagem. Erro: " + error.text);
+                });
         }
 
-        // Função para aplicar a máscara no número de telefone
+        // Funções de máscara de telefone e e-mail (já estão no seu código original)
         function aplicarMascaraTelefone(input) {
             input.value = input.value.replace(/\D/g, "");  // Remove todos os caracteres não numéricos
             if (input.value.length <= 2) {
@@ -250,17 +286,11 @@
             }
         }
 
-        // Função para permitir apenas números no campo "Número da Casa"
-        function aplicarMascaraCasa(input) {
-            input.value = input.value.replace(/\D/g, ""); // Remove qualquer caractere não numérico
-        }
-
-        // Função para garantir que o e-mail seja validado de forma flexível
         function aplicarMascaraEmail(input) {
             var value = input.value.trim().toLowerCase();
-            // Não força mais o e-mail para '@gmail.com', apenas limpa espaços
-            input.value = value;
+            input.value = value;  // Limpa espaços extras e padroniza para minúsculas
         }
     </script>
+
 </body>
 </html>
